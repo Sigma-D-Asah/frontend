@@ -1,0 +1,12 @@
+# Node.js
+*.env
+*.env.local
+/node_modules
+
+# React Router
+/.react-router/
+/build/
+
+# MacOS
+*.DS_Store
+*__MACOSX__*
