@@ -10,6 +10,9 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import { Sidebar } from "./components/Sidebar";
+import { Header } from "./components/Header";
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -33,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        {children} {/* Komponen 'App' akan di-render di sini */}
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -42,7 +45,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+      <Sidebar /> {/* <-- Sidebar (dengan NavLink) sekarang AMAN di dalam context */}
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 p-6 overflow-auto">
+          <Outlet /> {/* <-- Halaman (home.tsx) akan di-render di sini */}
+        </main>
+      </div>
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
