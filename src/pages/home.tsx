@@ -1,7 +1,4 @@
-import { Card, CardBody } from "@heroui/card";
-import { Chip } from "@heroui/chip";
-import { Spinner } from "@heroui/spinner";
-import { Input } from "@heroui/input";
+import { Card, CardBody, Chip, Spinner, Input } from "@heroui/react";
 
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { useMachines } from "@/hooks/useApi";

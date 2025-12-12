@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Card, CardBody } from "@heroui/card";
-import { Chip } from "@heroui/chip";
-import { Spinner } from "@heroui/spinner";
+import { Card, CardBody, Chip, Spinner } from "@heroui/react";
 import { FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
 
 import DashboardLayout from "@/layouts/dashboard-layout";
@@ -186,7 +184,7 @@ export default function DashboardPage() {
               <CardBody className="p-6">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <FiAlertTriangle className="text-red-500" />
-                  Prediksi Kegagalan Aktif
+                  Recent Active Failure Predictions
                 </h3>
                 {failures.length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
@@ -214,11 +212,17 @@ export default function DashboardPage() {
                             )}
                           </div>
                           <Chip
-                            color={prediction.isFailure ? "danger" : "success"}
+                            color={
+                              prediction.failureType === "No Failure"
+                                ? "success"
+                                : "danger"
+                            }
                             size="sm"
                             variant="flat"
                           >
-                            {prediction.isFailure ? "Kegagalan" : "Normal"}
+                            {prediction.failureType === "No Failure"
+                              ? "Normal"
+                              : "Failed"}
                           </Chip>
                         </div>
                         <div className="flex justify-between items-center text-sm">
@@ -230,8 +234,11 @@ export default function DashboardPage() {
                             %
                           </span>
                           <span className="text-gray-400">
-                            {new Date(prediction.createdAt).toLocaleDateString(
-                              "id-ID",
+                            {new Date(prediction.createdAt).toLocaleString("id-ID", 
+                            {
+                              dateStyle: "medium",
+                              timeStyle: "long",
+                            }
                             )}
                           </span>
                         </div>

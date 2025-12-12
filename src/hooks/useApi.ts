@@ -106,7 +106,7 @@ export function useInfinitePredictions() {
   return useInfiniteQuery({
     queryKey: ["predictions", "infinite"],
     queryFn: ({ pageParam }) =>
-      predictionApi.getAll({ cursor: pageParam, limit: 20 }),
+      predictionApi.getAll({ cursor: pageParam, limit: 10 }),
     getNextPageParam: (lastPage) => lastPage.pagination.nextCursor,
     initialPageParam: undefined as string | undefined,
   });

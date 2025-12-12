@@ -3,10 +3,10 @@ import { useState } from "react";
 import {
   FiHome,
   FiFileText,
-  FiUsers,
   FiTool,
   FiBarChart,
   FiMenu,
+  FiDatabase,
 } from "react-icons/fi";
 import { Button } from "@heroui/button";
 
@@ -79,24 +79,21 @@ export function Sidebar() {
         </NavLink>
 
         <div className="mt-3 px-1 text-xs text-gray-400 uppercase tracking-wider mb-2">
-          {!collapsed && "Groups"}
+          {!collapsed && "Maintenance & Reporting"}
         </div>
-        <div className="flex flex-col gap-2">
-          <NavLink
-            className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50"
-            to="#"
-          >
-            <FiUsers className="h-4 w-4 text-gray-500" />
-            {!collapsed && <span>Smart Group A</span>}
-          </NavLink>
-          <NavLink
-            className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50"
-            to="#"
-          >
-            <FiUsers className="h-4 w-4 text-gray-500" />
-            {!collapsed && <span>Smart Group B</span>}
-          </NavLink>
-        </div>
+        <NavLink
+          className={({ isActive }) =>
+            `flex items-center gap-3 p-2 rounded-md transition-colors ${
+              isActive
+                ? "bg-gray-100 text-gray-900 border-l-2 border-indigo-600"
+                : "hover:bg-gray-50"
+            }`
+          }
+          to="/data"
+        >
+          <FiDatabase className="h-4 w-4 text-gray-500" />
+          {!collapsed && <span>Sensors & Predictions</span>}
+        </NavLink>
 
         <NavLink
           className={({ isActive }) =>

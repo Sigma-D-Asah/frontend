@@ -1,35 +1,46 @@
 import type { ChatMessage, ChatMessageUI } from "@/types/api";
 
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Input } from "@heroui/input";
-import { Chip } from "@heroui/chip";
-import { Spinner } from "@heroui/spinner";
+import {
+  Button,
+  Chip,
+  Spinner,
+  Input,
+  Card,
+  CardBody,
+  CardHeader,
+  addToast,
+} from "@heroui/react";
 
 import DashboardLayout from "@/layouts/dashboard-layout";
 import {
   useTickets,
   useSendChatMessage,
-  useFailurePredictions,
+  useCreateTicket,
 } from "@/hooks/useApi";
 import { useChatStore } from "@/stores/useChatStore";
+import { CreateTicketModal } from "@/components/CreateTicketModal";
 
 export default function MaintenancePage() {
   const [input, setInput] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, conversationId, addMessage, setConversationId } =
-    useChatStore();
+  const {
+    messages,
+    conversationId,
+    addMessage,
+    setConversationId,
+    clearMessages,
+  } = useChatStore();
 
   const { data: ticketsData, isLoading: ticketsLoading } = useTickets({
     limit: 10,
   });
-  const { data: failuresData } = useFailurePredictions({ limit: 5 });
   const sendMessageMutation = useSendChatMessage();
+  const createTicketMutation = useCreateTicket();
 
   const tickets = ticketsData?.tickets || [];
-  const failures = failuresData?.predictions || [];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -86,16 +97,34 @@ export default function MaintenancePage() {
     }
   };
 
+  const handleCreateTicket = async (data: any) => {
+    try {
+      await createTicketMutation.mutateAsync(data);
+      setIsModalOpen(false);
+    } catch (error) {
+      addToast({
+        title: "Gagal Membuat Tiket",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Gagal membuat tiket. Silakan coba lagi.",
+        color: "danger",
+      });
+    }
+  };
+
   const getTicketStatusColor = (status: string) => {
     switch (status) {
-      case "open":
+      case "OPEN":
         return "primary";
-      case "in-progress":
+      case "ASSIGNED":
+        return "secondary";
+      case "IN_PROGRESS":
         return "warning";
-      case "completed":
+      case "RESOLVED":
         return "success";
-      case "cancelled":
-        return "danger";
+      case "CLOSED":
+        return "default";
       default:
         return "default";
     }
@@ -103,14 +132,16 @@ export default function MaintenancePage() {
 
   const getTicketStatusLabel = (status: string) => {
     switch (status) {
-      case "open":
+      case "OPEN":
         return "Terbuka";
-      case "in-progress":
+      case "ASSIGNED":
+        return "Ditugaskan";
+      case "IN_PROGRESS":
         return "Dalam Proses";
-      case "completed":
-        return "Selesai";
-      case "cancelled":
-        return "Dibatalkan";
+      case "RESOLVED":
+        return "Terselesaikan";
+      case "CLOSED":
+        return "Ditutup";
       default:
         return status;
     }
@@ -118,139 +149,72 @@ export default function MaintenancePage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high":
+      case "CRITICAL":
         return "danger";
-      case "medium":
+      case "HIGH":
+        return "danger";
+      case "MEDIUM":
         return "warning";
-      case "low":
+      case "LOW":
         return "success";
       default:
         return "default";
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "Tinggi";
-      case "medium":
-        return "Sedang";
-      case "low":
-        return "Rendah";
-      default:
-        return priority;
-    }
-  };
-
   return (
-    <DashboardLayout subtitle="Manajemen & AI Copilot" title="Maintenance">
+    <DashboardLayout
+      subtitle="Automated maintenance ticketing & chatbot"
+      title="Maintenance"
+    >
       <div className="container mx-auto max-w-7xl p-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Tickets & Predictions */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Failure Predictions */}
-            <Card>
-              <CardHeader className="pb-3">
-                <h2 className="text-xl font-bold">Prediksi Kegagalan Aktif</h2>
-              </CardHeader>
-              <CardBody>
-                {failures.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">
-                    Tidak ada prediksi kegagalan saat ini
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {failures.map((prediction) => (
-                      <div
-                        key={prediction.predictionId}
-                        className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <h3 className="font-semibold">
-                              {prediction.machineId}
-                            </h3>
-                            {prediction.failureType && (
-                              <p className="text-sm text-gray-600">
-                                Tipe Kegagalan: {prediction.failureType}
-                              </p>
-                            )}
-                          </div>
-                          <Chip
-                            color={prediction.isFailure ? "danger" : "success"}
-                            size="sm"
-                            variant="flat"
-                          >
-                            {prediction.isFailure ? "Kegagalan" : "Normal"}
-                          </Chip>
-                        </div>
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-500">
-                            Confidence:{" "}
-                            {((prediction.confidenceScore || 0) * 100).toFixed(
-                              1,
-                            )}
-                            %
-                          </span>
-                          <span className="text-gray-400">
-                            {new Date(prediction.createdAt).toLocaleDateString(
-                              "id-ID",
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardBody>
-            </Card>
-
             {/* Maintenance Tickets */}
             <Card>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 px-6 pt-6">
                 <div className="flex justify-between items-center w-full">
-                  <h2 className="text-xl font-bold">Tiket Maintenance</h2>
+                  <h2 className="text-xl font-bold">Maintenance Ticketing</h2>
                   <Button
                     color="primary"
                     size="sm"
-                    onPress={() => {
-                      /* TODO: Open create ticket modal */
-                    }}
+                    onPress={() => setIsModalOpen(true)}
                   >
                     Buat Tiket Baru
                   </Button>
                 </div>
               </CardHeader>
-              <CardBody>
+              <CardBody className="px-6 pb-6">
                 {ticketsLoading ? (
                   <div className="flex justify-center py-8">
                     <Spinner label="Memuat tiket..." />
                   </div>
                 ) : tickets.length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
-                    Belum ada tiket maintenance
+                    Belum ada Maintenance Ticketing
                   </p>
                 ) : (
                   <div className="space-y-3">
                     {tickets.map((ticket) => (
                       <div
                         key={ticket.ticketId}
-                        className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                        className="p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
                       >
                         <div className="flex justify-between items-start mb-3">
-                          <div>
+                          <div className="flex-1">
                             <h3 className="font-semibold">{ticket.title}</h3>
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                               {ticket.description}
                             </p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 shrink-0 ml-3">
                             <Chip
                               color={getPriorityColor(ticket.priority)}
                               size="sm"
                               variant="flat"
                             >
-                              {getPriorityLabel(ticket.priority)}
+                              {ticket.priority.toUpperCase()}
                             </Chip>
                             <Chip
                               color={getTicketStatusColor(ticket.status)}
@@ -261,11 +225,15 @@ export default function MaintenancePage() {
                             </Chip>
                           </div>
                         </div>
-                        <div className="flex justify-between items-center text-sm text-gray-500">
+                        <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-gray-800">
                           <span>Mesin: {ticket.machineId}</span>
-                          <span>
-                            {new Date(ticket.createdAt).toLocaleDateString(
+                          <span className="text-xs">
+                            {new Date(ticket.createdAt).toLocaleString(
                               "id-ID",
+                              {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              },
                             )}
                           </span>
                         </div>
@@ -280,12 +248,26 @@ export default function MaintenancePage() {
           {/* Right Column - AI Copilot Chat */}
           <div className="lg:col-span-1">
             <Card className="h-[800px] flex flex-col">
-              <CardHeader className="pb-3">
-                <div className="w-full">
-                  <h2 className="text-xl font-bold">AI Maintenance Copilot</h2>
-                  <p className="text-sm text-gray-500">
-                    Tanyakan tentang kondisi mesin dan rekomendasi perawatan
-                  </p>
+              <CardHeader className="pb-3 px-6 pt-6">
+                <div className="w-full flex justify-between items-start">
+                  <div>
+                    <h2 className="text-xl font-bold">
+                      Maintenance Copilot with AI
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      Tanyakan tentang kondisi mesin dan rekomendasi perawatan
+                    </p>
+                  </div>
+                  {messages.length > 0 && (
+                    <Button
+                      color="danger"
+                      size="sm"
+                      variant="flat"
+                      onPress={clearMessages}
+                    >
+                      Clear Chat
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardBody className="flex-1 flex flex-col overflow-hidden p-0">
@@ -354,7 +336,7 @@ export default function MaintenancePage() {
                       size="sm"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
+                      onKeyUp={handleKeyPress}
                     />
                     <Button
                       color="primary"
@@ -374,6 +356,14 @@ export default function MaintenancePage() {
             </Card>
           </div>
         </div>
+
+        {/* Create Ticket Modal */}
+        <CreateTicketModal
+          isLoading={createTicketMutation.isPending}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleCreateTicket}
+        />
       </div>
     </DashboardLayout>
   );

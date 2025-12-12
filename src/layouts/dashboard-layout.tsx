@@ -10,10 +10,10 @@ function TopBar() {
   return (
     <div className="w-full bg-gray-900 text-gray-100 h-12 flex items-center justify-between px-6 border-b border-gray-800">
       <div className="text-sm font-semibold">
-        Accenture Analytics Applications Platform
+        System Intelligence Generative for Maintenance & Anomaly Detection
       </div>
       <div className="text-sm text-gray-300">
-        Predictive Maintenance Copilot
+        Predictive Maintenance Copilot Platform
       </div>
     </div>
   );

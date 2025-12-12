@@ -9,6 +9,7 @@ import ClaimsPage from "@/pages/claims";
 import DocsPage from "@/pages/docs";
 import BlogPage from "@/pages/blog";
 import AboutPage from "@/pages/about";
+import SensorsPredictionsPage from "@/pages/sensors-predictions";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route element={<ClaimsPage />} path="/claims" />
       <Route element={<WelcomePage />} path="/welcome" />
       <Route element={<MaintenancePage />} path="/maintenance" />
+      <Route element={<SensorsPredictionsPage />} path="/data" />
       <Route element={<ReportingPage />} path="/reporting" />
       <Route element={<DocsPage />} path="/docs" />
       <Route element={<BlogPage />} path="/blog" />

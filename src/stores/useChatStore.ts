@@ -1,7 +1,7 @@
 import type { ChatMessageUI } from "@/types/api";
 
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 
 interface ChatState {
   messages: ChatMessageUI[];
@@ -18,34 +18,25 @@ interface ChatState {
 
 export const useChatStore = create<ChatState>()(
   devtools(
-    persist(
-      (set) => ({
-        messages: [],
-        conversationId: "",
-        isLoading: false,
-        error: null,
+    (set) => ({
+      messages: [],
+      conversationId: "",
+      isLoading: false,
+      error: null,
 
-        addMessage: (message) =>
-          set((state) => ({ messages: [...state.messages, message] })),
+      addMessage: (message) =>
+        set((state) => ({ messages: [...state.messages, message] })),
 
-        setMessages: (messages) => set({ messages }),
+      setMessages: (messages) => set({ messages }),
 
-        setConversationId: (id) => set({ conversationId: id }),
+      setConversationId: (id) => set({ conversationId: id }),
 
-        clearMessages: () => set({ messages: [], conversationId: "" }),
+      clearMessages: () => set({ messages: [], conversationId: "" }),
 
-        setLoading: (loading) => set({ isLoading: loading }),
+      setLoading: (loading) => set({ isLoading: loading }),
 
-        setError: (error) => set({ error }),
-      }),
-      {
-        name: "chat-storage",
-        partialize: (state) => ({
-          messages: state.messages,
-          conversationId: state.conversationId,
-        }),
-      },
-    ),
+      setError: (error) => set({ error }),
+    }),
     { name: "ChatStore" },
   ),
 );

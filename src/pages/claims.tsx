@@ -1,5 +1,4 @@
-import { Button } from "@heroui/button";
-import { Card, CardBody } from "@heroui/card";
+import { Button, Card, CardBody } from "@heroui/react";
 import { FiCheckCircle, FiClock, FiFileText, FiStar } from "react-icons/fi";
 
 import DashboardLayout from "@/layouts/dashboard-layout";
@@ -9,9 +8,17 @@ export default function ClaimsPage() {
   const { data: ticketsData } = useTickets({ limit: 100 });
   const tickets = ticketsData?.tickets || [];
 
-  const starredTickets = tickets.filter((t) => t.priority === "HIGH");
-  const inProgressTickets = tickets.filter((t) => t.status === "IN_PROGRESS");
-  const completedTickets = tickets.filter((t) => t.status === "RESOLVED");
+  // Since no auth system, all tickets are "my claims"
+  // Starred = HIGH or CRITICAL priority tickets
+  const starredTickets = tickets.filter(
+    (t) => t.priority === "HIGH" || t.priority === "CRITICAL",
+  );
+  const inProgressTickets = tickets.filter(
+    (t) => t.status === "IN_PROGRESS" || t.status === "ASSIGNED",
+  );
+  const completedTickets = tickets.filter(
+    (t) => t.status === "RESOLVED" || t.status === "CLOSED",
+  );
 
   return (
     <DashboardLayout
@@ -78,7 +85,7 @@ export default function ClaimsPage() {
               {starredTickets.map((machine: any) => (
                 <div
                   key={machine.id}
-                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border-l-4 border-l-red-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
+                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 border-l-2 border-l-red-500 shadow-sm hover:shadow-md transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="font-bold text-gray-800 dark:text-gray-100">
@@ -130,7 +137,7 @@ export default function ClaimsPage() {
               {inProgressTickets.map((machine: any) => (
                 <div
                   key={machine.id}
-                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border-l-4 border-l-yellow-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 border-l-2 border-l-yellow-500 shadow-sm hover:shadow-md transition-all cursor-pointer"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="font-bold text-gray-800 dark:text-gray-100">
@@ -193,7 +200,7 @@ export default function ClaimsPage() {
               {completedTickets.map((machine: any) => (
                 <div
                   key={machine.id}
-                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border-l-4 border-l-green-500 shadow-sm opacity-80 hover:opacity-100 transition-opacity"
+                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 border-l-2 border-l-green-500 shadow-sm opacity-80 hover:opacity-100 transition-all"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="font-bold text-gray-800 dark:text-gray-100">
