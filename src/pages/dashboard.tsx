@@ -15,7 +15,7 @@ export default function DashboardPage() {
   );
 
   const { data: machinesData, isLoading: machinesLoading } = useMachines();
-  const { data: failuresData } = useFailurePredictions({ limit: 10 });
+  const { data: failuresData } = useFailurePredictions({ limit: 1000 });
   const { data: unprocessedData } = useUnprocessedSensors();
 
   const machines = machinesData?.allMachines || [];

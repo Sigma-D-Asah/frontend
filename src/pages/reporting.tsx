@@ -39,8 +39,8 @@ export default function ReportingPage() {
   const [currentPage, setCurrentPage] = useState(0);
 
   const { data: machinesData } = useMachines();
-  const { data: predictionsData } = useFailurePredictions({ limit: 100 });
-  const { data: ticketsData } = useTickets({ limit: 100 });
+  const { data: predictionsData } = useFailurePredictions({ limit: 1000 });
+  const { data: ticketsData } = useTickets({ limit: 1000 });
   const {
     data: infinitePredictionsData,
     fetchNextPage,
