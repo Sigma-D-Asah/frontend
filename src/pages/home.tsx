@@ -8,7 +8,7 @@ import { useMachines } from "@/hooks/useApi";
 
 export default function HomePage() {
   const { data: machinesData, isLoading } = useMachines();
-  const machines = machinesData?.machines || [];
+  const machines = machinesData?.allMachines || [];
 
   return (
     <DashboardLayout subtitle="Overview & Copilot" title="Home">
@@ -34,9 +34,7 @@ export default function HomePage() {
                 {machines.map((machine) => (
                   <Card key={machine.machineId} className="shadow-md">
                     <CardBody>
-                      <h4 className="font-bold text-lg">
-                        {machine.name}
-                      </h4>
+                      <h4 className="font-bold text-lg">{machine.name}</h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {machine.code}
                       </p>

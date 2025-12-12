@@ -1,10 +1,11 @@
+import type { ChatMessage, ChatMessageUI } from "@/types/api";
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Input } from "@heroui/input";
 import { Chip } from "@heroui/chip";
 import { Spinner } from "@heroui/spinner";
-import type { ChatMessage, ChatMessageUI } from "@/types/api";
 
 import DashboardLayout from "@/layouts/dashboard-layout";
 import {
@@ -53,7 +54,7 @@ export default function MaintenancePage() {
         message: input,
         conversationId: conversationId || undefined,
       };
-      
+
       const response = await sendMessageMutation.mutateAsync(apiMessage);
 
       if (response.data.conversationId && !conversationId) {
@@ -65,7 +66,7 @@ export default function MaintenancePage() {
         content: response.data.response,
         conversationId: response.data.conversationId,
       };
-      
+
       addMessage(assistantMessage);
     } catch (error) {
       const errorMessage: ChatMessageUI = {
@@ -75,6 +76,7 @@ export default function MaintenancePage() {
             ? error.message
             : "Maaf, terjadi kesalahan. Silakan coba lagi.",
       };
+
       addMessage(errorMessage);
     }
   };
@@ -177,26 +179,25 @@ export default function MaintenancePage() {
                             )}
                           </div>
                           <Chip
-                            color={
-                              prediction.isFailure ? "danger" : "success"
-                            }
+                            color={prediction.isFailure ? "danger" : "success"}
                             size="sm"
                             variant="flat"
                           >
-                            {prediction.isFailure
-                              ? "Kegagalan"
-                              : "Normal"}
+                            {prediction.isFailure ? "Kegagalan" : "Normal"}
                           </Chip>
                         </div>
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-gray-500">
                             Confidence:{" "}
-                            {((prediction.confidenceScore || 0) * 100).toFixed(1)}%
+                            {((prediction.confidenceScore || 0) * 100).toFixed(
+                              1,
+                            )}
+                            %
                           </span>
                           <span className="text-gray-400">
-                            {new Date(
-                              prediction.createdAt,
-                            ).toLocaleDateString("id-ID")}
+                            {new Date(prediction.createdAt).toLocaleDateString(
+                              "id-ID",
+                            )}
                           </span>
                         </div>
                       </div>

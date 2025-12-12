@@ -4,7 +4,7 @@ import { apiFetch } from "@/lib/api";
 
 export const machineApi = {
   // Get all machines
-  getAll: () => apiFetch<{ machines: Machine[] }>("/machines"),
+  getAll: () => apiFetch<{ allMachines: Machine[] }>("/machines"),
 
   // Get machine by code
   getByCode: (code: string) =>

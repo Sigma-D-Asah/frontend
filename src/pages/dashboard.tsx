@@ -20,14 +20,14 @@ export default function DashboardPage() {
   const { data: failuresData } = useFailurePredictions({ limit: 10 });
   const { data: unprocessedData } = useUnprocessedSensors();
 
-  const machines = machinesData?.machines || [];
+  const machines = machinesData?.allMachines || [];
   const failures = failuresData?.predictions || [];
   const unprocessedCount = unprocessedData?.readings?.length || 0;
 
   const selectedMachine =
     machines.find((m) => m.machineId === selectedMachineId) || machines[0];
 
-  const getStatusColor = (type: string) => {
+  const getStatusColor = (type: string): "danger" | "warning" | "success" | "default" => {
     switch (type) {
       case "H":
         return "danger";
@@ -134,7 +134,9 @@ export default function DashboardPage() {
                       ) : (
                         <FiCheckCircle />
                       )}
-                      {getStatusLabel(selectedMachine?.type || "L").toUpperCase()}
+                      {getStatusLabel(
+                        selectedMachine?.type || "L",
+                      ).toUpperCase()}
                     </div>
                     <div className="text-xs opacity-80 mt-1">
                       Status: {selectedMachine?.status || "ACTIVE"}
@@ -210,9 +212,7 @@ export default function DashboardPage() {
                             )}
                           </div>
                           <Chip
-                            color={
-                              prediction.isFailure ? "danger" : "success"
-                            }
+                            color={prediction.isFailure ? "danger" : "success"}
                             size="sm"
                             variant="flat"
                           >
@@ -222,15 +222,15 @@ export default function DashboardPage() {
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-gray-500">
                             Confidence:{" "}
-                            {(
-                              (prediction.confidenceScore || 0) * 100
-                            ).toFixed(1)}
+                            {((prediction.confidenceScore || 0) * 100).toFixed(
+                              1,
+                            )}
                             %
                           </span>
                           <span className="text-gray-400">
-                            {new Date(
-                              prediction.createdAt,
-                            ).toLocaleDateString("id-ID")}
+                            {new Date(prediction.createdAt).toLocaleDateString(
+                              "id-ID",
+                            )}
                           </span>
                         </div>
                       </div>
@@ -287,12 +287,19 @@ export default function DashboardPage() {
                     return (
                       <div
                         key={machine.machineId}
+                        role="button"
+                        tabIndex={0}
                         className={`p-3 rounded-lg border cursor-pointer transition ${
                           selectedMachine?.machineId === machine.machineId
                             ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500"
                             : "hover:border-gray-400"
                         }`}
                         onClick={() => setSelectedMachineId(machine.machineId)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            setSelectedMachineId(machine.machineId);
+                          }
+                        }}
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div className="font-semibold text-sm">
