@@ -10,7 +10,6 @@ import { Spinner } from "@heroui/spinner";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import {
   useTickets,
-  useCreateTicket,
   useSendChatMessage,
   useFailurePredictions,
 } from "@/hooks/useApi";
@@ -27,7 +26,6 @@ export default function MaintenancePage() {
     limit: 10,
   });
   const { data: failuresData } = useFailurePredictions({ limit: 5 });
-  const createTicketMutation = useCreateTicket();
   const sendMessageMutation = useSendChatMessage();
 
   const tickets = ticketsData?.tickets || [];

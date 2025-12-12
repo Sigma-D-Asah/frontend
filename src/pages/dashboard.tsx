@@ -27,7 +27,9 @@ export default function DashboardPage() {
   const selectedMachine =
     machines.find((m) => m.machineId === selectedMachineId) || machines[0];
 
-  const getStatusColor = (type: string): "danger" | "warning" | "success" | "default" => {
+  const getStatusColor = (
+    type: string,
+  ): "danger" | "warning" | "success" | "default" => {
     switch (type) {
       case "H":
         return "danger";
@@ -287,16 +289,16 @@ export default function DashboardPage() {
                     return (
                       <div
                         key={machine.machineId}
-                        role="button"
-                        tabIndex={0}
                         className={`p-3 rounded-lg border cursor-pointer transition ${
                           selectedMachine?.machineId === machine.machineId
                             ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500"
                             : "hover:border-gray-400"
                         }`}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => setSelectedMachineId(machine.machineId)}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
+                          if (e.key === "Enter" || e.key === " ") {
                             setSelectedMachineId(machine.machineId);
                           }
                         }}

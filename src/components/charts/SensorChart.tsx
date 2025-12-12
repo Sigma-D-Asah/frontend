@@ -10,7 +10,12 @@ import {
   ComposedChart,
 } from "recharts";
 
-import { IChartData } from "@/services/mock-data";
+// Chart data interface
+interface IChartData {
+  time: string;
+  value: number;
+  threshold?: number;
+}
 
 // Menerima data dari Parent Component
 interface SensorChartProps {

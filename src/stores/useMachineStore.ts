@@ -28,7 +28,7 @@ export const useMachineStore = create<MachineState>()(
       setSelectedMachine: (machine) => set({ selectedMachine: machine }),
 
       selectMachineByCode: (code) => {
-        const machine = get().machines.find((m) => m.machineCode === code);
+        const machine = get().machines.find((m) => m.code === code);
 
         set({ selectedMachine: machine || null });
       },
