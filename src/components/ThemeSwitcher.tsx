@@ -3,7 +3,6 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SwitchProps, useSwitch } from "@heroui/switch";
 import clsx from "clsx";
 import { useTheme } from "@heroui/use-theme";
-
 import { LuSunrise, LuMoon } from "react-icons/lu";
 
 export interface ThemeSwitchProps {
@@ -32,8 +31,9 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
-  }, [isMounted]);
+  }, []);
 
   // Prevent Hydration Mismatch
   if (!isMounted) return <div className="w-6 h-6" />;
@@ -71,11 +71,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
           ),
         })}
       >
-        {isSelected ? (
-          <LuMoon size={22} />
-        ) : (
-          <LuSunrise size={22} />
-        )}
+        {isSelected ? <LuMoon size={22} /> : <LuSunrise size={22} />}
       </div>
     </Component>
   );

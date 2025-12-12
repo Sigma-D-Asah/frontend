@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/ThemeSwitcher";
-import { FaGithub as GithubIcon, FaDiscord as DiscordIcon } from 'react-icons/fa6';
-import accentureLogo from "@/assets/logo-accenture.svg";
+import {
+  FaGithub as GithubIcon,
+  FaDiscord as DiscordIcon,
+} from "react-icons/fa6";
 import {
   Navbar as HeroUINavbar,
   NavbarBrand,
@@ -15,21 +15,30 @@ import {
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 
+import accentureLogo from "@/assets/logo-accenture.svg";
+import { ThemeSwitch } from "@/components/ThemeSwitcher";
+import { siteConfig } from "@/config/site";
+
 export const Navbar = () => {
   return (
-    <HeroUINavbar position="sticky" maxWidth="xl">
-      <NavbarContent justify="start" className="px-2 sm:px-6">
+    <HeroUINavbar maxWidth="xl" position="sticky">
+      <NavbarContent className="px-2 sm:px-6" justify="start">
         <NavbarBrand>
-          <Link to="/" className="flex items-center gap-3">
-            <img src={accentureLogo} alt="Accenture" className="h-6 w-auto" />
-            <span className="font-semibold">Predictive Maintenance Copilot</span>
+          <Link className="flex items-center gap-3" to="/">
+            <img alt="Accenture" className="h-6 w-auto" src={accentureLogo} />
+            <span className="font-semibold">
+              Predictive Maintenance Copilot
+            </span>
           </Link>
         </NavbarBrand>
 
         <div className="hidden lg:flex items-center gap-6 ml-4">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
-              <Link to={item.href} className="text-sm text-gray-600 hover:text-gray-900">
+              <Link
+                className="text-sm text-gray-600 hover:text-gray-900"
+                to={item.href}
+              >
                 {item.label}
               </Link>
             </NavbarItem>
@@ -37,17 +46,17 @@ export const Navbar = () => {
         </div>
       </NavbarContent>
 
-      <NavbarContent justify="end" className="px-2 sm:px-6">
+      <NavbarContent className="px-2 sm:px-6" justify="end">
         <div className="hidden md:flex items-center gap-3">
           <div className="hidden md:flex items-center">
-            <Input placeholder="Search" className="text-sm" />
+            <Input className="text-sm" placeholder="Search" />
           </div>
 
           <div className="hidden md:flex items-center gap-3 text-gray-500">
-            <a href={siteConfig.links.discord || '#'} aria-label="Discord">
+            <a aria-label="Discord" href={siteConfig.links.discord || "#"}>
               <DiscordIcon className="text-base" />
             </a>
-            <a href={siteConfig.links.github || '#'} aria-label="GitHub">
+            <a aria-label="GitHub" href={siteConfig.links.github || "#"}>
               <GithubIcon className="text-base" />
             </a>
           </div>
@@ -55,7 +64,9 @@ export const Navbar = () => {
           <ThemeSwitch />
 
           <div className="hidden md:block">
-            <Button variant="flat" className="ml-2 text-sm">Sponsor</Button>
+            <Button className="ml-2 text-sm" variant="flat">
+              Sponsor
+            </Button>
           </div>
         </div>
 
@@ -69,7 +80,10 @@ export const Navbar = () => {
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
-              <Link to={item.href} className="block w-full text-left py-2 px-3 rounded text-sm hover:bg-gray-50">
+              <Link
+                className="block w-full text-left py-2 px-3 rounded text-sm hover:bg-gray-50"
+                to={item.href}
+              >
                 {item.label}
               </Link>
             </NavbarMenuItem>

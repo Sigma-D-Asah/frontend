@@ -3,7 +3,10 @@ export type HeaderProps = {
   subtitle?: string;
 };
 
-export function Header({ title = "Dashboard Overview", subtitle = "Power · Region 1" }: HeaderProps) {
+export function Header({
+  title = "Dashboard Overview",
+  subtitle = "Power · Region 1",
+}: HeaderProps) {
   return (
     <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200">
       <div>
